@@ -1,0 +1,12 @@
+---
+# provisions.yml
+# this brings up machines and provision them with
+# docker installs.
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  roles:
+    - role: launch
+      name: "{{ name }}"
+      class: "{{ class }}"
