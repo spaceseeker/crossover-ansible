@@ -9,7 +9,7 @@ zone:
 image: ami-fdb8229e
 security_groups: launch-wizard-1
 group_name: test
-host_private_ip: 172.31.29.239
+host_private_ip: 172.31.17.239
 initial_mysql_pwd: admin
 volumes: []
 pip_extra_args: '-i https://pypi.doubanio.com/simple'
@@ -26,5 +26,5 @@ aws_ami: ami-fdb8229e
 aws_instance_type: t2.micro
 aws_keypair: crossover
 aws_security_group_name: launch-wizard-1
-user_data: "{{ lookup('template', '../templates/swarm-cloud-config.j2') }}"
+#user_data: "{{ lookup('template', '../templates/swarm-cloud-config.j2') }}"
 swarm_node_count: 2

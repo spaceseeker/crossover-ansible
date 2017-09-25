@@ -32,6 +32,10 @@
 - name: Initialize swarm cluster
   shell: docker swarm init --advertise-addr={{ groups['swarm_manager'][0] }}:2377
 
-- name: Retrieve Swarm Manager Token
-  shell: docker swarm join-token -q manager
-  register: swarm_manager_token
+- name: Retrieve Swarm Node(s) Token
+  shell: docker swarm join-token -q worker
+  register: l_swarm_node_token
+
+- name: Export swarm node token
+  set_fact:
+    swarm_node_token: "{{ l_swarm_node_token }}"

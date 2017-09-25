@@ -18,6 +18,11 @@
     ec2_id: "{{ item.id }}"
   with_items: "{{ master.instances }}"
 
+- name: Set swarm manager IP fact
+  set_fact:
+    swarm_manager_ip: "{{ item.public_ip }}"
+  with_items: "{{ master.instances }}"
+
 - name: Wait for instance to boot
   wait_for:
     host: "{{ item.public_ip }}"

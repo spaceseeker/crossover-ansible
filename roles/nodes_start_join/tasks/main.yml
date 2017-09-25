@@ -23,8 +23,10 @@
   with_items:
     - docker-py
 
-- debug: msg = "Token is {{ hostvars[groups['swarm_manager'][0]]['swarm_node_token'] }}"
-- debug: msg = "swarm manager ip is {{ groups['swarm_manager'][0] }}"
+- debug: 
+    msg: "swarm manager ip is {{ groups['swarm_manager'][0] }}"
+- debug: 
+    msg: "Token is {{ hostvars[groups['swarm_manager'][0]]['swarm_node_token']['stdout'] }}"
 
 - name: Join Swarm Worker Node to Cluster
-  shell: "docker swarm join --token {{ hostvars[groups['swarm_manager'][0]]['swarm_node_token'] }} {{ groups['swarm_manager'][0] }}:2377"
+  shell: "docker swarm join --token {{ hostvars[groups['swarm_manager'][0]]['swarm_node_token']['stdout'] }} {{ groups['swarm_manager'][0] }}:2377"
