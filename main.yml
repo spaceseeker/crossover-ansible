@@ -6,7 +6,41 @@
 - hosts: localhost
   connection: local
   gather_facts: no
+    
   roles:
     - role: launch
-      name: "{{ name }}"
-      class: "{{ class }}"
+      name: "mysql-ec2"
+      class: "mysql"
+
+- hosts: "tag_class_mysql"
+  become: True
+  become_user: root
+  become_method: sudo
+  roles:
+    - mysql-docker
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  roles:
+    - role: builder
+
+- hosts: localhost
+  connection: local
+# gather_facts: no
+  roles:
+    - role: swarm_provision
+
+- hosts: swarm_manager
+  become: True
+  become_user: root
+  become_method: sudo
+  roles:
+    - role: swarm_start
+
+- hosts: swarm_node
+  become: True
+  become_user: root
+  become_method: sudo
+  roles:
+    - role: nodes_start_join

@@ -1,0 +1,31 @@
+- name: docker_swarm | Installing Python Pre-Reqs
+  pip:
+    name: "{{ item }}"
+    state: "present"
+  with_items:
+    - 'docker-py'
+
+- name: Pull git repository for service {{ app_name }}
+  git:
+    repo: "{{ repo }}"
+    dest: "/tmp/{{ app_name }}"
+    accept_hostkey: true
+  when: repo is defined
+
+- set_fact:
+    image: "{{ registry }}/{{ app_name }}"
+  when: repo is defined
+
+- name: Log into DockerHub
+  docker_login:
+    username: "{{ registry }}"
+    password: "{{ registry_password }}"
+    email: spaceseeker@gmail.com
+
+- name: Build image {{ image }}
+  docker_image:
+    name: "{{ image }}"
+    path: "/tmp/{{ app_name }}"
+    push: yes
+    force: yes
+  when: repo is defined

@@ -1,0 +1,30 @@
+---
+# group_vars/all.yml
+# for provisioning mysql
+region: ap-southeast-1
+keypair: crossover
+instance_type: t2.micro
+iam_profile:
+zone:
+image: ami-fdb8229e
+security_groups: launch-wizard-1
+group_name: test
+host_private_ip: 172.31.29.239
+initial_mysql_pwd: admin
+volumes: []
+pip_extra_args: '-i https://pypi.doubanio.com/simple'
+
+# for builder role
+app_name: journal-app
+repo: 'https://github.com/spaceseeker/crossover.git'
+registry: spaceseeker1
+registry_password: ISayMok7
+
+# for swarm role
+aws_region: ap-southeast-1
+aws_ami: ami-fdb8229e
+aws_instance_type: t2.micro
+aws_keypair: crossover
+aws_security_group_name: launch-wizard-1
+user_data: "{{ lookup('template', '../templates/swarm-cloud-config.j2') }}"
+swarm_node_count: 2

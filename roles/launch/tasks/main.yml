@@ -6,6 +6,7 @@
     keypair: "{{ keypair }}"
     zone: "{{ zone }}"
     group: "{{ security_groups }}"
+    private_ip: "{{ host_private_ip }}"
     image: "{{ image }}"
     instance_profile_name: "{{ iam_profile }}"
     instance_type: "{{ instance_type }}"

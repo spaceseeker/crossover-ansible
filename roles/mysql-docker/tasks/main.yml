@@ -1,0 +1,45 @@
+---
+# roles/docker/tasks/main.yml
+- name: Install docker
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - python-setuptools
+    - docker
+
+- name: Start docker
+  service:
+    name: docker
+    state: running
+
+- name: Install pypi
+  easy_install: name=pip
+
+- name: Install docker-py to latest
+  pip:
+    name: "{{ item }}"
+    state: latest
+    extra_args: "{{ pip_extra_args }}"
+  with_items:
+    - docker-py
+
+- name: mysql data container
+  docker_container:
+    name: mysql_data
+    image: busybox
+    state: present
+    volumes:
+      - /var/lib/mysql
+
+- name: start the mysql
+  docker_container:
+    name: mysql
+    image: mysql
+    state: started
+    published_ports:
+      - 3306:3306
+    volumes_from:
+      - mysql_data
+    env:
+      MYSQL_ROOT_PASSWORD: "{{initial_mysql_pwd}}"

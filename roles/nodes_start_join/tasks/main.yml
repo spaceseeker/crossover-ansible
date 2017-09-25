@@ -1,0 +1,30 @@
+---
+- name: Install docker
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - python-setuptools
+    - docker
+
+- name: Start docker
+  service:
+    name: docker
+    state: running
+
+- name: Install pypi
+  easy_install: name=pip
+
+- name: Install docker-py to latest
+  pip:
+    name: "{{ item }}"
+    state: latest
+    extra_args: "{{ pip_extra_args }}"
+  with_items:
+    - docker-py
+
+- debug: msg = "Token is {{ hostvars[groups['swarm_manager'][0]]['swarm_node_token'] }}"
+- debug: msg = "swarm manager ip is {{ groups['swarm_manager'][0] }}"
+
+- name: Join Swarm Worker Node to Cluster
+  shell: "docker swarm join --token {{ hostvars[groups['swarm_manager'][0]]['swarm_node_token'] }} {{ groups['swarm_manager'][0] }}:2377"

@@ -1,0 +1,57 @@
+---
+- name: Create Swarm Manager Machine
+  ec2:
+    region: "{{ aws_region }}"
+    image: "{{ aws_ami }}"
+    instance_type: "{{ aws_instance_type }}"
+    keypair: "{{ aws_keypair }}"
+    group: "{{ aws_security_group_name }}"
+    instance_tags:
+      Name: swarm_manager_2
+    wait: yes
+  register: master
+
+- name: Add new instances to host group
+  add_host:
+    name: "{{ item.public_ip }}"
+    groups: "swarm_manager"
+    ec2_id: "{{ item.id }}"
+  with_items: "{{ master.instances }}"
+
+- name: Wait for instance to boot
+  wait_for:
+    host: "{{ item.public_ip }}"
+    port: 22
+    delay: 30
+    timeout: 300
+    state: started
+  with_items: "{{ master.instances }}"
+
+- name: Create Swarm Node(s)
+  ec2:
+    region: "{{ aws_region }}"
+    image: "{{ aws_ami }}"
+    instance_type: "{{ aws_instance_type }}"
+    keypair: "{{ aws_keypair }}"
+    group: "{{ aws_security_group_name }}"
+    count: "{{ swarm_node_count }}"
+    instance_tags: 
+      Name: swarm_node_2
+    wait: yes
+  register: nodes
+
+- name: Add Swarm Nodes to Host Group
+  add_host:
+    name: "{{ item.public_ip }}"
+    groups: "swarm_node"
+    ec2_id: "{{ item.id }}"
+  with_items: "{{ nodes.instances }}"
+
+- name: Wait for instance to boot
+  wait_for:
+    host: "{{ item.public_ip }}"
+    port: 22
+    delay: 30
+    timeout: 300
+    state: started
+  with_items: "{{ nodes.instances }}"
