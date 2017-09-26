@@ -15,13 +15,14 @@
 - name: Install pypi
   easy_install: name=pip
 
-- name: Install docker-py to latest
+- name: Install docker-py and docker-compose to latest
   pip:
     name: "{{ item }}"
     state: latest
     extra_args: "{{ pip_extra_args }}"
   with_items:
     - docker-py
+    - docker-compose
 
 - debug: 
     msg: "swarm manager ip is {{ groups['swarm_manager'][0] }}"
@@ -29,4 +30,4 @@
     msg: "Token is {{ hostvars[groups['swarm_manager'][0]]['swarm_node_token']['stdout'] }}"
 
 - name: Join Swarm Worker Node to Cluster
-  shell: "docker swarm join --token {{ hostvars[groups['swarm_manager'][0]]['swarm_node_token']['stdout'] }} {{ groups['swarm_manager'][0] }}:2377"
+  shell: "docker swarm join --advertise-addr={{ swarm_iface | default('eth0') }}:2377 --token {{ hostvars[groups['swarm_manager'][0]]['swarm_node_token']['stdout'] }} {{ groups['swarm_manager'][0] }}:2377"

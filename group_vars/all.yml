@@ -28,3 +28,6 @@ aws_keypair: crossover
 aws_security_group_name: launch-wizard-1
 #user_data: "{{ lookup('template', '../templates/swarm-cloud-config.j2') }}"
 swarm_node_count: 2
+
+# scale docker service
+docker_service_count: 3

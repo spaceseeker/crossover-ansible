@@ -44,3 +44,11 @@
   become_method: sudo
   roles:
     - role: nodes_start_join
+
+- hosts: swarm_manager
+  become: True
+  become_user: root
+  become_method: sudo 
+  roles:
+    - role: swamp_app_start
+

@@ -15,13 +15,14 @@
 - name: Install pypi
   easy_install: name=pip
 
-- name: Install docker-py to latest
+- name: Install docker-py and docker-compose to latest
   pip:
     name: "{{ item }}"
     state: latest
     extra_args: "{{ pip_extra_args }}"
   with_items:
     - docker-py
+    - docker-compose
 
 - name: Make upload directory
   file:
@@ -35,6 +36,13 @@
 - name: Retrieve Swarm Node(s) Token
   shell: docker swarm join-token -q worker
   register: l_swarm_node_token
+
+#- name: Retrieve Swarm Manager Token
+#  shell: docker swarm join-token -q manager
+#  register: swarm_manager_token
+
+#- name: Join Swarm Manager Nodes To Cluster
+#  shell: docker swarm join --advertise-addr={{ groups['swarm_manager'][0] }}:2377 --token={{ swarm_manager_token['stdout'] }} {{ groups['swarm_manager'][0] }}:2377
 
 - name: Export swarm node token
   set_fact:

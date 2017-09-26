@@ -1,0 +1,23 @@
+---
+- name: Prepare journal app service
+  docker_service:
+    project_src: "{{ app_name }}"
+    state: absent
+
+- name: Start journal app service
+  docker_service:
+    project_name: "{{ app_name }}"
+    definition:
+      web:
+        image: "{{ registry }}/{{ app_name }}"
+        volumes:
+          - "/tmp/upload:~/upload"
+        ports:
+          - "80:8080"
+
+- name: Scale the service
+  docker_service:
+    project_src: "{{ app_name}}"
+    scale:
+      web: "{{ docker_service_count }}"
+
